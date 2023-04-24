@@ -85,7 +85,7 @@ if [[ -e /etc/os-release ]]; then
         if [[ $ID = 'ubuntu' || $ID = 'debian' ]]; then
             sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server python-mysqldb
             # HSFD changes for Ubuntu 18.04
-            sudo sed -i '/bind-address/d' /etc/mysql/mysql.conf.d/mysqld.cnf
+            sudo sed -i -e "/bind-address/d" /etc/mysql/mysql.conf.d/mysqld.cnf
             #sudo sed -i -e "/bind-address/d" /etc/mysql/my.cnf
             sudo service mysql restart
         elif [[ $ID = 'fedora' ]]; then
@@ -117,7 +117,9 @@ if [[ -e /etc/os-release ]]; then
 
     if [[ $INSTALL_FAAFO -eq 1 ]]; then
         if [[ $ID = 'ubuntu' || $ID = 'debian' ]]; then
-            sudo apt-get install -y python-dev python-pip3 supervisor git zlib1g-dev libmysqlclient-dev python-mysqldb
+            sudo apt install python2-minimal
+            sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
+            sudo apt-get install -y python-dev python-pip supervisor git zlib1g-dev libmysqlclient-dev python-mysqldb
             # Following is needed because of
             # https://bugs.launchpad.net/ubuntu/+source/supervisor/+bug/1594740
             if [ $(lsb_release --short --codename) = xenial ]; then
@@ -131,7 +133,7 @@ if [[ -e /etc/os-release ]]; then
                 fi
             fi
         elif [[ $ID = 'fedora' ]]; then
-            sudo dnf install -y python-devel python-pip3 supervisor git zlib-devel mariadb-devel gcc which python-mysql
+            sudo dnf install -y python-devel python-pip supervisor git zlib-devel mariadb-devel gcc which python-mysql
             sudo systemctl enable supervisord
             sudo systemctl start supervisord
         #elif [[ $ID = 'opensuse' || $ID = 'sles' ]]; then
@@ -145,9 +147,9 @@ if [[ -e /etc/os-release ]]; then
         git clone https://gogs.informatik.hs-fulda.de/srieger/cloud-computing-msc-ai-examples
         cd cloud-computing-msc-ai-examples/faafo
         # following line required by bug 1636150
-        sudo pip3 install --upgrade pbr
-        sudo pip3 install -r requirements.txt
-        sudo python3 setup.py install
+        sudo pip install --upgrade pbr
+        sudo pip install -r requirements.txt
+        sudo python setup.py install
 
         sudo sed -i -e "s#transport_url = .*#transport_url = $URL_MESSAGING#" /etc/faafo/faafo.conf
         sudo sed -i -e "s#database_url = .*#database_url = $URL_DATABASE#" /etc/faafo/faafo.conf
