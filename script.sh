@@ -85,7 +85,7 @@ if [[ -e /etc/os-release ]]; then
         if [[ $ID = 'ubuntu' || $ID = 'debian' ]]; then
             sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server python-mysqldb
             # HSFD changes for Ubuntu 18.04
-            sudo sed -i -e "/bind-address/d" /etc/mysql/mysql.conf.d/mysqld.cnf
+            sudo sed -i '/bind-address/d' /etc/mysql/mysql.conf.d/mysqld.cnf
             #sudo sed -i -e "/bind-address/d" /etc/mysql/my.cnf
             sudo service mysql restart
         elif [[ $ID = 'fedora' ]]; then
